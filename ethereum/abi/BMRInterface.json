@@ -1,0 +1,30 @@
+{
+   "abi": [
+      {
+         "inputs": [],
+         "name": "currentPrice",
+         "outputs": [
+            {
+               "internalType": "uint256",
+               "name": "",
+               "type": "uint256"
+            }
+         ],
+         "stateMutability": "view",
+         "type": "function"
+      },
+      {
+         "inputs": [
+            {
+               "internalType": "string",
+               "name": "_jobId",
+               "type": "string"
+            }
+         ],
+         "name": "requestPrice",
+         "outputs": [],
+         "stateMutability": "nonpayable",
+         "type": "function"
+      }
+   ]
+}

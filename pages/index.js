@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Container, Button, Menu } from 'semantic-ui-react';
 import Head from 'next/head';
-import DataFeed from '../components/DataFeed';
-import BMR from '../components/BMR';
+import DataFeed from '../components/datafeed-page';
+import BMR from '../components/bmr-page';
 import { Link } from '../routes';
 
 class MoonLink extends Component {

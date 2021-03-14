@@ -12,6 +12,7 @@ class Table extends Component {
    state = {
       jobid: '',
       value: 'N/A',
+      updated: 'N/A',
       loading: false,
       errorMessage: '',
    };
@@ -20,7 +21,7 @@ class Table extends Component {
       this.getValue();
    }
 
-   async componentWillUnmount() {
+   componentWillUnmount() {
       clearInterval(this.intervalID);
    }
 
@@ -50,10 +51,21 @@ class Table extends Component {
    };
 
    getValue = async () => {
+      // Date
+      const currentdate = new Date();
+
+      // Contract Fetch
       const clientAddress = '0xe88ec866D05e637074B5a0D0d931f292d7871613';
       const contractInstance = BMRInstance(clientAddress);
       const value = await contractInstance.currentPrice();
-      this.setState({ value: value.toString() });
+      this.setState({
+         value: value.toString(),
+         updated: `${currentdate.getFullYear()}/${
+            currentdate.getMonth() + 1
+         }/${currentdate.getDate()} ${currentdate.getHours()}:${currentdate.getMinutes()}:${(
+            '00' + currentdate.getSeconds()
+         ).slice(-2)}`,
+      });
 
       this.intervalID = setTimeout(this.getValue.bind(this), 5000);
    };
@@ -62,7 +74,10 @@ class Table extends Component {
       return (
          <div>
             <h3>Basic Request Model</h3>
-            <h5>Current Value: {this.state.value}</h5>
+            <h5>
+               Current Value: {this.state.value} (Last Updated:
+               {this.state.updated})
+            </h5>
             <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
                <Form.Field>
                   <label>Enter Job ID:</label>

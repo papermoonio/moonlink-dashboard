@@ -26,6 +26,10 @@ class Table extends Component {
       this.onUpdate();
    }
 
+   componentWillUnmount() {
+      clearInterval(this.intervalID);
+   }
+
    onUpdate = async () => {
       // Date
       const currentdate = new Date();

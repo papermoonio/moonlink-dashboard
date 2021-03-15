@@ -11,6 +11,7 @@ class MoonLink extends Component {
       return {};
    }
 
+   // Initial State
    state = {
       account: 'Not Connected',
    };
@@ -18,14 +19,19 @@ class MoonLink extends Component {
    async componentDidMount() {}
 
    onConnect = async () => {
-      const accounts = await ethereum.request({
-         method: 'eth_requestAccounts',
-      });
-
-      if (accounts) {
-         this.setState(() => {
-            return { account: accounts[0] };
+      if (typeof ethereum === 'undefined') {
+         // MetaMask not detected
+         this.setState({ account: 'MetaMask not Detected' });
+      } else {
+         // MetaMask detected
+         const accounts = await ethereum.request({
+            method: 'eth_requestAccounts',
          });
+
+         // Set Account to state
+         if (accounts) {
+            this.setState({ account: accounts[0] });
+         }
       }
    };
 
@@ -59,6 +65,7 @@ class MoonLink extends Component {
             <hr />
             <br />
             <BMR account={this.state.account} />
+            <br />
          </Container>
       );
    }

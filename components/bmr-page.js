@@ -30,11 +30,13 @@ class Table extends Component {
 
       this.setState({ loading: true, errorMessage: '' });
 
+      // Check if Job ID is supported
       for (let i in jobids) {
          if (jobids[i] === this.state.jobid) {
             const clientAddress = '0xe88ec866D05e637074B5a0D0d931f292d7871613';
-            const contractInstance = BMRInstance(clientAddress);
+            const contractInstance = BMRInstance(clientAddress, 'write');
 
+            // Sends the Tx
             try {
                const tx = await contractInstance.requestPrice(this.state.jobid);
             } catch (err) {
@@ -61,8 +63,8 @@ class Table extends Component {
       this.setState({
          value: value.toString(),
          updated: `${currentdate.getFullYear()}/
-         ${currentdate.getMonth() + 1}/
-         ${currentdate.getDate()} 
+         ${('00' + (currentdate.getMonth() + 1)).slice(-2)}/
+         ${('00' + currentdate.getDate()).slice(-2)} -- 
          ${('00' + currentdate.getHours()).slice(-2)}:
          ${('00' + currentdate.getMinutes()).slice(-2)}:
          ${('00' + currentdate.getSeconds()).slice(-2)}`,

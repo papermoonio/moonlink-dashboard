@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Button } from 'semantic-ui-react';
-import ConsumerInstance from '../ethereum/feed';
+import ProxyInstance from '../ethereum/feed';
 const addresses = require('../ethereum/addresses');
 
 class Table extends Component {
@@ -20,6 +19,16 @@ class Table extends Component {
       linkusd: 'N/A',
       sushiusd: 'N/A',
       uniusd: 'N/A',
+      btcUpdate: 'N/A',
+      ethUpdate: 'N/A',
+      dotUpdate: 'N/A',
+      ksmUpdate: 'N/A',
+      aaveUpdate: 'N/A',
+      algoUpdate: 'N/A',
+      bandUpdate: 'N/A',
+      linkUpdate: 'N/A',
+      sushiUpdate: 'N/A',
+      uniUpdate: 'N/A',
    };
 
    async componentDidMount() {
@@ -34,54 +43,80 @@ class Table extends Component {
       // Date
       const currentdate = new Date();
       // BTC
-      const btcPrice = await this.getPrice(addresses.btcusd);
+      const [btcPrice, btcUpdate] = await this.getPriceData(addresses.btcusd);
       // ETH
-      const ethPrice = await this.getPrice(addresses.ethusd);
+      const [ethPrice, ethUpdate] = await this.getPriceData(addresses.ethusd);
       // DOT
-      const dotPrice = await this.getPrice(addresses.dotusd);
+      const [dotPrice, dotUpdate] = await this.getPriceData(addresses.dotusd);
       // KSM
-      const ksmPrice = await this.getPrice(addresses.ksmusd);
+      const [ksmPrice, ksmUpdate] = await this.getPriceData(addresses.ksmusd);
       // AAVE
-      const aavePrice = await this.getPrice(addresses.aaveusd);
+      const [aavePrice, aaveUpdate] = await this.getPriceData(
+         addresses.aaveusd
+      );
       // ALGO
-      const algoPrice = await this.getPrice(addresses.algousd);
+      const [algoPrice, algoUpdate] = await this.getPriceData(
+         addresses.algousd
+      );
       // BAND
-      const bandPrice = await this.getPrice(addresses.bandusd);
+      const [bandPrice, bandUpdate] = await this.getPriceData(
+         addresses.bandusd
+      );
       // LINK
-      const linkPrice = await this.getPrice(addresses.linkusd);
+      const [linkPrice, linkUpdate] = await this.getPriceData(
+         addresses.linkusd
+      );
       // SUSHI
-      const sushiPrice = await this.getPrice(addresses.sushiusd);
+      const [sushiPrice, sushiUpdate] = await this.getPriceData(
+         addresses.sushiusd
+      );
       // UNI
-      const uniPrice = await this.getPrice(addresses.uniusd);
+      const [uniPrice, uniUpdate] = await this.getPriceData(addresses.uniusd);
 
-      this.setState(() => {
-         return {
-            btcusd: btcPrice.toFixed(2),
-            ethusd: ethPrice.toFixed(2),
-            dotusd: dotPrice.toFixed(2),
-            ksmusd: ksmPrice.toFixed(2),
-            aaveusd: aavePrice.toFixed(2),
-            algousd: algoPrice.toFixed(2),
-            bandusd: bandPrice.toFixed(2),
-            linkusd: linkPrice.toFixed(2),
-            sushiusd: sushiPrice.toFixed(2),
-            uniusd: uniPrice.toFixed(2),
-            updated: `${currentdate.getFullYear()}/
-            ${currentdate.getMonth() + 1}/
-            ${currentdate.getDate()} 
-            ${('00' + currentdate.getHours()).slice(-2)}:
-            ${('00' + currentdate.getMinutes()).slice(-2)}:
-            ${('00' + currentdate.getSeconds()).slice(-2)}`,
-         };
+      this.setState({
+         // Set Price
+         btcusd: btcPrice.toFixed(2),
+         ethusd: ethPrice.toFixed(2),
+         dotusd: dotPrice.toFixed(2),
+         ksmusd: ksmPrice.toFixed(2),
+         aaveusd: aavePrice.toFixed(2),
+         algousd: algoPrice.toFixed(2),
+         bandusd: bandPrice.toFixed(2),
+         linkusd: linkPrice.toFixed(2),
+         sushiusd: sushiPrice.toFixed(2),
+         uniusd: uniPrice.toFixed(2),
+
+         // Set Last Updated
+         btcUpdate: btcUpdate,
+         ethUpdate: ethUpdate,
+         dotUpdate: dotUpdate,
+         ksmUpdate: ksmUpdate,
+         aaveUpdate: aaveUpdate,
+         algoUpdate: algoUpdate,
+         bandUpdate: bandUpdate,
+         linkUpdate: linkUpdate,
+         sushiUpdate: sushiUpdate,
+         uniUpdate: uniUpdate,
       });
 
       this.intervalID = setTimeout(this.onUpdate.bind(this), 5000);
    };
 
-   getPrice = async (address) => {
-      const contractInstance = ConsumerInstance(address);
+   getPriceData = async (address) => {
+      const contractInstance = ProxyInstance(address);
       const dec = await contractInstance.decimals();
-      return (await contractInstance.getLatestPrice()) / Math.pow(10, dec);
+      const info = await contractInstance.latestRoundData();
+      const price = info[1] / Math.pow(10, dec);
+      const epoch = new Date(info[3].toNumber() * 1000);
+      const date = `${epoch.getFullYear()}/
+      ${('00' + (epoch.getMonth() + 1)).slice(-2)}/
+      ${('00' + epoch.getDate()).slice(-2)} -- 
+      ${('00' + epoch.getHours()).slice(-2)}:
+      ${('00' + epoch.getMinutes()).slice(-2)}:
+      ${('00' + epoch.getSeconds()).slice(-2)}`;
+
+      //return (await contractInstance.getLatestPrice()) / Math.pow(10, dec);
+      return [price, date];
    };
 
    render() {
@@ -98,72 +133,72 @@ class Table extends Component {
                </thead>
                <tbody>
                   <tr>
-                     <td data-label='Token Pair'>BTC/USD</td>
-                     <td data-label='Price'>{this.state.btcusd}</td>
-                     <td data-label='Last Updated'>{this.state.updated}</td>
+                     <td data-label='Token Pair'>BTC / USD</td>
+                     <td data-label='Price'>$ {this.state.btcusd}</td>
+                     <td data-label='Last Updated'>{this.state.btcUpdate}</td>
                   </tr>
                </tbody>
                <tbody>
                   <tr>
-                     <td data-label='Token Pair'>ETH/USD</td>
-                     <td data-label='Price'>{this.state.ethusd}</td>
-                     <td data-label='Last Updated'>{this.state.updated}</td>
+                     <td data-label='Token Pair'>ETH / USD</td>
+                     <td data-label='Price'>$ {this.state.ethusd}</td>
+                     <td data-label='Last Updated'>{this.state.ethUpdate}</td>
                   </tr>
                </tbody>
                <tbody>
                   <tr>
-                     <td data-label='Token Pair'>DOT/USD</td>
-                     <td data-label='Price'>{this.state.dotusd}</td>
-                     <td data-label='Last Updated'>{this.state.updated}</td>
+                     <td data-label='Token Pair'>DOT / USD</td>
+                     <td data-label='Price'>$ {this.state.dotusd}</td>
+                     <td data-label='Last Updated'>{this.state.dotUpdate}</td>
                   </tr>
                </tbody>
                <tbody>
                   <tr>
-                     <td data-label='Token Pair'>KSM/USD</td>
-                     <td data-label='Price'>{this.state.ksmusd}</td>
-                     <td data-label='Last Updated'>{this.state.updated}</td>
+                     <td data-label='Token Pair'>KSM / USD</td>
+                     <td data-label='Price'>$ {this.state.ksmusd}</td>
+                     <td data-label='Last Updated'>{this.state.ksmUpdate}</td>
                   </tr>
                </tbody>
                <tbody>
                   <tr>
-                     <td data-label='Token Pair'>AAVE/USD</td>
-                     <td data-label='Price'>{this.state.aaveusd}</td>
-                     <td data-label='Last Updated'>{this.state.updated}</td>
+                     <td data-label='Token Pair'>AAVE / USD</td>
+                     <td data-label='Price'>$ {this.state.aaveusd}</td>
+                     <td data-label='Last Updated'>{this.state.aaveUpdate}</td>
                   </tr>
                </tbody>
                <tbody>
                   <tr>
-                     <td data-label='Token Pair'>ALGO/USD</td>
-                     <td data-label='Price'>{this.state.algousd}</td>
-                     <td data-label='Last Updated'>{this.state.updated}</td>
+                     <td data-label='Token Pair'>ALGO / USD</td>
+                     <td data-label='Price'>$ {this.state.algousd}</td>
+                     <td data-label='Last Updated'>{this.state.algoUpdate}</td>
                   </tr>
                </tbody>
                <tbody>
                   <tr>
-                     <td data-label='Token Pair'>BAND/USD</td>
-                     <td data-label='Price'>{this.state.bandusd}</td>
-                     <td data-label='Last Updated'>{this.state.updated}</td>
+                     <td data-label='Token Pair'>BAND / USD</td>
+                     <td data-label='Price'>$ {this.state.bandusd}</td>
+                     <td data-label='Last Updated'>{this.state.bandUpdate}</td>
                   </tr>
                </tbody>
                <tbody>
                   <tr>
-                     <td data-label='Token Pair'>LINK/USD</td>
-                     <td data-label='Price'>{this.state.linkusd}</td>
-                     <td data-label='Last Updated'>{this.state.updated}</td>
+                     <td data-label='Token Pair'>LINK / USD</td>
+                     <td data-label='Price'>$ {this.state.linkusd}</td>
+                     <td data-label='Last Updated'>{this.state.linkUpdate}</td>
                   </tr>
                </tbody>
                <tbody>
                   <tr>
-                     <td data-label='Token Pair'>SUSHI/USD</td>
-                     <td data-label='Price'>{this.state.sushiusd}</td>
-                     <td data-label='Last Updated'>{this.state.updated}</td>
+                     <td data-label='Token Pair'>SUSHI / USD</td>
+                     <td data-label='Price'>$ {this.state.sushiusd}</td>
+                     <td data-label='Last Updated'>{this.state.sushiUpdate}</td>
                   </tr>
                </tbody>
                <tbody>
                   <tr>
-                     <td data-label='Token Pair'>UNI/USD</td>
-                     <td data-label='Price'>{this.state.uniusd}</td>
-                     <td data-label='Last Updated'>{this.state.updated}</td>
+                     <td data-label='Token Pair'>UNI / USD</td>
+                     <td data-label='Price'>$ {this.state.uniusd}</td>
+                     <td data-label='Last Updated'>{this.state.uniUpdate}</td>
                   </tr>
                </tbody>
             </table>

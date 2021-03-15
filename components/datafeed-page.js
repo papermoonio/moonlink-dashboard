@@ -9,6 +9,7 @@ class Table extends Component {
    }
 
    state = {
+      errorMessage: '',
       btcusd: 'N/A',
       ethusd: 'N/A',
       dotusd: 'N/A',
@@ -40,8 +41,6 @@ class Table extends Component {
    }
 
    onUpdate = async () => {
-      // Date
-      const currentdate = new Date();
       // BTC
       const [btcPrice, btcUpdate] = await this.getPriceData(addresses.btcusd);
       // ETH
@@ -103,20 +102,25 @@ class Table extends Component {
    };
 
    getPriceData = async (address) => {
-      const contractInstance = ProxyInstance(address);
-      const dec = await contractInstance.decimals();
-      const info = await contractInstance.latestRoundData();
-      const price = info[1] / Math.pow(10, dec);
-      const epoch = new Date(info[3].toNumber() * 1000);
-      const date = `${epoch.getFullYear()}/
-      ${('00' + (epoch.getMonth() + 1)).slice(-2)}/
-      ${('00' + epoch.getDate()).slice(-2)} -- 
-      ${('00' + epoch.getHours()).slice(-2)}:
-      ${('00' + epoch.getMinutes()).slice(-2)}:
-      ${('00' + epoch.getSeconds()).slice(-2)}`;
+      try {
+         const contractInstance = ProxyInstance(address);
+         const dec = await contractInstance.decimals();
+         const info = await contractInstance.latestRoundData();
+         const price = info[1] / Math.pow(10, dec);
+         const epoch = new Date(info[3].toNumber() * 1000);
+         const date = `${epoch.getFullYear()}/
+         ${('00' + (epoch.getMonth() + 1)).slice(-2)}/
+         ${('00' + epoch.getDate()).slice(-2)} -- 
+         ${('00' + epoch.getHours()).slice(-2)}:
+         ${('00' + epoch.getMinutes()).slice(-2)}:
+         ${('00' + epoch.getSeconds()).slice(-2)}`;
 
-      //return (await contractInstance.getLatestPrice()) / Math.pow(10, dec);
-      return [price, date];
+         //return (await contractInstance.getLatestPrice()) / Math.pow(10, dec);
+         return [price, date];
+      } catch (error) {
+         console.log(error);
+         return [0, 'N/A'];
+      }
    };
 
    render() {

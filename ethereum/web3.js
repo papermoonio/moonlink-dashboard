@@ -2,7 +2,11 @@ const ethers = require('ethers');
 
 let web3;
 
-if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
+if (
+   typeof window !== 'undefined' &&
+   typeof window.web3 !== 'undefined' &&
+   window.ethereum.chainId === '0x507'
+) {
    // We are in the browser and MetaMask is running
    web3 = new ethers.providers.Web3Provider(window.ethereum);
 } else {

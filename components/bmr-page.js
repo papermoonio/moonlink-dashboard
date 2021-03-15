@@ -30,47 +30,73 @@ class Table extends Component {
 
       this.setState({ loading: true, errorMessage: '' });
 
-      // Check if Job ID is supported
-      for (let i in jobids) {
-         if (jobids[i] === this.state.jobid) {
-            const clientAddress = '0xe88ec866D05e637074B5a0D0d931f292d7871613';
-            const contractInstance = BMRInstance(clientAddress, 'write');
+      // Check Metamask and Chain ID
+      if (
+         web3.currentProvider.isMetaMask &&
+         web3.currentProvider.chainId === '0x507'
+      ) {
+         // Check if Job ID is supported
+         for (let i in jobids) {
+            if (jobids[i] === this.state.jobid) {
+               const clientAddress =
+                  '0xe88ec866D05e637074B5a0D0d931f292d7871613';
+               const contractInstance = BMRInstance(clientAddress, 'write');
 
-            // Sends the Tx
-            try {
-               const tx = await contractInstance.requestPrice(this.state.jobid);
-            } catch (err) {
-               this.setState({ loading: false, errorMessage: err.message });
+               // Sends the Tx
+               try {
+                  const tx = await contractInstance.requestPrice(
+                     this.state.jobid
+                  );
+               } catch (err) {
+                  this.setState({
+                     loading: false,
+                     errorMessage: 'Connect MetaMask first',
+                  });
+               }
+               this.setState({ loading: false });
+
+               return;
             }
-            this.setState({ loading: false });
-
-            return;
          }
-      }
 
-      // Error message because JobId not in the list
-      this.setState({ loading: false, errorMessage: 'Job ID not supported' });
+         // Error message because JobId not in the list
+         this.setState({
+            loading: false,
+            errorMessage: 'Job ID not supported',
+         });
+      } else {
+         // Error message because MetaMask not found or Network Id not correct
+         this.setState({
+            loading: false,
+            errorMessage:
+               'Please install MetaMask or connect it to Moonbase Alpha',
+         });
+      }
    };
 
    getValue = async () => {
-      // Date
-      const currentdate = new Date();
+      try {
+         // Date
+         const currentdate = new Date();
 
-      // Contract Fetch
-      const clientAddress = '0xe88ec866D05e637074B5a0D0d931f292d7871613';
-      const contractInstance = BMRInstance(clientAddress);
-      const value = await contractInstance.currentPrice();
-      this.setState({
-         value: value.toString(),
-         updated: `${currentdate.getFullYear()}/
-         ${('00' + (currentdate.getMonth() + 1)).slice(-2)}/
-         ${('00' + currentdate.getDate()).slice(-2)} -- 
-         ${('00' + currentdate.getHours()).slice(-2)}:
-         ${('00' + currentdate.getMinutes()).slice(-2)}:
-         ${('00' + currentdate.getSeconds()).slice(-2)}`,
-      });
+         // Contract Fetch
+         const clientAddress = '0xe88ec866D05e637074B5a0D0d931f292d7871613';
+         const contractInstance = BMRInstance(clientAddress);
+         const value = await contractInstance.currentPrice();
+         this.setState({
+            value: value.toString(),
+            updated: `${currentdate.getFullYear()}/
+            ${('00' + (currentdate.getMonth() + 1)).slice(-2)}/
+            ${('00' + currentdate.getDate()).slice(-2)} -- 
+            ${('00' + currentdate.getHours()).slice(-2)}:
+            ${('00' + currentdate.getMinutes()).slice(-2)}:
+            ${('00' + currentdate.getSeconds()).slice(-2)}`,
+         });
 
-      this.intervalID = setTimeout(this.getValue.bind(this), 5000);
+         this.intervalID = setTimeout(this.getValue.bind(this), 5000);
+      } catch (error) {
+         console.log(error);
+      }
    };
 
    render() {

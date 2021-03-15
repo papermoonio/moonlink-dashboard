@@ -4,6 +4,7 @@ import Head from 'next/head';
 import DataFeed from '../components/datafeed-page';
 import BMR from '../components/bmr-page';
 import { Link } from '../routes';
+import web3 from '../ethereum/web3';
 
 class MoonLink extends Component {
    // Nextjs uses this function to render this first server-side
@@ -19,18 +20,22 @@ class MoonLink extends Component {
    async componentDidMount() {}
 
    onConnect = async () => {
-      if (typeof ethereum === 'undefined') {
+      if (typeof window.ethereum === 'undefined') {
          // MetaMask not detected
          this.setState({ account: 'MetaMask not Detected' });
       } else {
-         // MetaMask detected
-         const accounts = await ethereum.request({
-            method: 'eth_requestAccounts',
-         });
+         // MetaMask detected - check network
+         if (ethereum.chainId !== '0x507') {
+            this.setState({ account: 'Only Moonbase Alpha Supported' });
+         } else {
+            const accounts = await ethereum.request({
+               method: 'eth_requestAccounts',
+            });
 
-         // Set Account to state
-         if (accounts) {
-            this.setState({ account: accounts[0] });
+            // Set account to state
+            if (accounts) {
+               this.setState({ account: accounts[0] });
+            }
          }
       }
    };

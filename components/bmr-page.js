@@ -32,8 +32,8 @@ class Table extends Component {
 
       // Check Metamask and Chain ID
       if (
-         web3.currentProvider.isMetaMask &&
-         web3.currentProvider.chainId === '0x507'
+         typeof window.ethereum !== 'undefined' &&
+         ethereum.chainId === '0x507'
       ) {
          // Check if Job ID is supported
          for (let i in jobids) {

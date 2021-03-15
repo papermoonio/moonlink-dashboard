@@ -20,7 +20,7 @@ class MoonLink extends Component {
    async componentDidMount() {}
 
    onConnect = async () => {
-      if (typeof window.ethereum === 'undefined') {
+      if (typeof ethereum === 'undefined') {
          // MetaMask not detected
          this.setState({ account: 'MetaMask not Detected' });
       } else {

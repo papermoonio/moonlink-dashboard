@@ -13,6 +13,7 @@ class Table extends Component {
       jobid: '',
       value: 'N/A',
       updated: 'N/A',
+      lastJobID: 'N/A',
       loading: false,
       errorMessage: '',
    };
@@ -81,15 +82,31 @@ class Table extends Component {
          const clientAddress = '0xe88ec866D05e637074B5a0D0d931f292d7871613';
          const contractInstance = BMRInstance(clientAddress);
          const value = (await contractInstance.currentPrice()) / 100;
-         this.setState({
-            value: value.toString(),
-            updated: `${currentdate.getFullYear()}/
-            ${('00' + (currentdate.getMonth() + 1)).slice(-2)}/
-            ${('00' + currentdate.getDate()).slice(-2)} -- 
-            ${('00' + currentdate.getHours()).slice(-2)}:
-            ${('00' + currentdate.getMinutes()).slice(-2)}:
-            ${('00' + currentdate.getSeconds()).slice(-2)}`,
-         });
+
+         // Check if value is new to update data
+         if (value != this.state.value) {
+            // Update value, time and lastJobID
+            this.setState({
+               value: value.toString(),
+               updated: `${currentdate.getFullYear()}/
+               ${('00' + (currentdate.getMonth() + 1)).slice(-2)}/
+               ${('00' + currentdate.getDate()).slice(-2)}   
+               ${('00' + currentdate.getHours()).slice(-2)}:
+               ${('00' + currentdate.getMinutes()).slice(-2)}:
+               ${('00' + currentdate.getSeconds()).slice(-2)}`,
+               lastJobID: this.state.jobid,
+            });
+         } else {
+            // Only update time
+            this.setState({
+               updated: `${currentdate.getFullYear()}/
+               ${('00' + (currentdate.getMonth() + 1)).slice(-2)}/
+               ${('00' + currentdate.getDate()).slice(-2)}   
+               ${('00' + currentdate.getHours()).slice(-2)}:
+               ${('00' + currentdate.getMinutes()).slice(-2)}:
+               ${('00' + currentdate.getSeconds()).slice(-2)}`,
+            });
+         }
 
          this.intervalID = setTimeout(this.getValue.bind(this), 5000);
       } catch (error) {
@@ -103,7 +120,7 @@ class Table extends Component {
             <h3>Basic Request Model</h3>
             <h5>
                Current Value: {this.state.value} (Last Updated:
-               {this.state.updated})
+               {this.state.updated} -- JobID: {this.state.lastJobID})
             </h5>
             <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
                <Form.Field>

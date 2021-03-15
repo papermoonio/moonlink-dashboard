@@ -71,6 +71,14 @@ class MoonLink extends Component {
             <br />
             <BMR account={this.state.account} />
             <br />
+            <p>
+               Don't judge the code :) as it is for demostration purposes only.
+               You can the source code &nbsp;
+               <a href='https://github.com/albertov19/moonlink-dashboard'>
+                  here
+               </a>
+            </p>
+            <br />
          </Container>
       );
    }

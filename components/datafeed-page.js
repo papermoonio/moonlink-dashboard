@@ -66,11 +66,12 @@ class Table extends Component {
             linkusd: linkPrice.toFixed(2),
             sushiusd: sushiPrice.toFixed(2),
             uniusd: uniPrice.toFixed(2),
-            updated: `${currentdate.getFullYear()}/${
-               currentdate.getMonth() + 1
-            }/${currentdate.getDate()} ${currentdate.getHours()}:${currentdate.getMinutes()}:${(
-               '00' + currentdate.getSeconds()
-            ).slice(-2)}`,
+            updated: `${currentdate.getFullYear()}/
+            ${currentdate.getMonth() + 1}/
+            ${currentdate.getDate()} 
+            ${('00' + currentdate.getHours()).slice(-2)}:
+            ${('00' + currentdate.getMinutes()).slice(-2)}:
+            ${('00' + currentdate.getSeconds()).slice(-2)}`,
          };
       });
 

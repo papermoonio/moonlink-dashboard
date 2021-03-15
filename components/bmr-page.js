@@ -60,11 +60,12 @@ class Table extends Component {
       const value = await contractInstance.currentPrice();
       this.setState({
          value: value.toString(),
-         updated: `${currentdate.getFullYear()}/${
-            currentdate.getMonth() + 1
-         }/${currentdate.getDate()} ${currentdate.getHours()}:${currentdate.getMinutes()}:${(
-            '00' + currentdate.getSeconds()
-         ).slice(-2)}`,
+         updated: `${currentdate.getFullYear()}/
+         ${currentdate.getMonth() + 1}/
+         ${currentdate.getDate()} 
+         ${('00' + currentdate.getHours()).slice(-2)}:
+         ${('00' + currentdate.getMinutes()).slice(-2)}:
+         ${('00' + currentdate.getSeconds()).slice(-2)}`,
       });
 
       this.intervalID = setTimeout(this.getValue.bind(this), 5000);

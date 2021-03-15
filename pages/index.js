@@ -4,8 +4,6 @@ import Head from 'next/head';
 import DataFeed from '../components/datafeed-page';
 import BMR from '../components/bmr-page';
 import { Link } from '../routes';
-import web3 from '../ethereum/web3';
-
 class MoonLink extends Component {
    // Nextjs uses this function to render this first server-side
    static async getInitialProps() {
@@ -44,6 +42,13 @@ class MoonLink extends Component {
       return (
          <Container>
             <Head>
+               <title>Moonlink Dashboard</title>
+               <link
+                  rel='icon'
+                  type='image/png'
+                  sizes='32x32'
+                  href='/favicon.png'
+               />
                <link
                   rel='stylesheet'
                   href='//cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css'

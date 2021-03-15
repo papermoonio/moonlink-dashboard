@@ -44,13 +44,11 @@ class Table extends Component {
 
                // Sends the Tx
                try {
-                  const tx = await contractInstance.requestPrice(
-                     this.state.jobid
-                  );
+                  await contractInstance.requestPrice(this.state.jobid);
                } catch (err) {
                   this.setState({
                      loading: false,
-                     errorMessage: 'Connect MetaMask first',
+                     errorMessage: err.message,
                   });
                }
                this.setState({ loading: false });

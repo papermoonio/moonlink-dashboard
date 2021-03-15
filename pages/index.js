@@ -15,7 +15,15 @@ class MoonLink extends Component {
       account: 'Not Connected',
    };
 
-   async componentDidMount() {}
+   async componentDidMount() {
+      // If already connected display account
+      if (
+         typeof ethereum !== 'undefined' &&
+         ethereum.selectedAddress !== null
+      ) {
+         this.setState({ account: ethereum.selectedAddress });
+      }
+   }
 
    onConnect = async () => {
       if (typeof ethereum === 'undefined') {

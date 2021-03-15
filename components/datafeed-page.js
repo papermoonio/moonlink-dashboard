@@ -8,6 +8,7 @@ class Table extends Component {
       return {};
    }
 
+   // Set Initial State
    state = {
       errorMessage: '',
       btcusd: 'N/A',
@@ -102,6 +103,7 @@ class Table extends Component {
    };
 
    getPriceData = async (address) => {
+      // Get price data from proxy contract
       try {
          const contractInstance = ProxyInstance(address);
          const dec = await contractInstance.decimals();
@@ -115,9 +117,9 @@ class Table extends Component {
          ${('00' + epoch.getMinutes()).slice(-2)}:
          ${('00' + epoch.getSeconds()).slice(-2)}`;
 
-         //return (await contractInstance.getLatestPrice()) / Math.pow(10, dec);
          return [price, date];
       } catch (error) {
+         // Could not fetch price return error
          console.log(error);
          return [0, 'N/A'];
       }

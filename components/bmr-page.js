@@ -82,7 +82,7 @@ class Table extends Component {
          // Contract Fetch
          const clientAddress = '0xe88ec866D05e637074B5a0D0d931f292d7871613';
          const contractInstance = BMRInstance(clientAddress);
-         const value = await contractInstance.currentPrice();
+         const value = (await contractInstance.currentPrice()) / 100;
          this.setState({
             value: value.toString(),
             updated: `${currentdate.getFullYear()}/

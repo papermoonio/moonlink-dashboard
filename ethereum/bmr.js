@@ -4,14 +4,14 @@ const ethers = require('ethers');
 
 const BMRInstance = (address, flag) => {
    switch (flag) {
-      case 'write':
+      case 1:
          return new ethers.Contract(
             address,
             BMRInterface.abi,
-            web3.getSigner()
+            web3().getSigner()
          );
       default:
-         return new ethers.Contract(address, BMRInterface.abi, web3);
+         return new ethers.Contract(address, BMRInterface.abi, web3());
    }
 };
 

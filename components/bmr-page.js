@@ -41,7 +41,7 @@ class Table extends Component {
             if (jobids[i] === this.state.jobid) {
                const clientAddress =
                   '0xe88ec866D05e637074B5a0D0d931f292d7871613';
-               const contractInstance = BMRInstance(clientAddress, 'write');
+               const contractInstance = BMRInstance(clientAddress, 1);
 
                // Sends the Tx
                try {
@@ -80,7 +80,7 @@ class Table extends Component {
 
          // Contract Fetch
          const clientAddress = '0xe88ec866D05e637074B5a0D0d931f292d7871613';
-         const contractInstance = BMRInstance(clientAddress);
+         const contractInstance = BMRInstance(clientAddress, 0);
          const value = (await contractInstance.currentPrice()) / 100;
 
          // Check if value is new to update data

@@ -129,6 +129,10 @@ class Table extends Component {
       return (
          <div>
             <h3>Data Price Feed</h3>
+            <p>
+               Information displayed in the following table corresponds to
+               on-chain price data stored in the Moonbase Alpha TestNet!
+            </p>
             <table className='ui celled table'>
                <thead>
                   <tr>

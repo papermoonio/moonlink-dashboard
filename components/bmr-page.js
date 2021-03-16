@@ -5,9 +5,7 @@ const jobids = require('../ethereum/jobid');
 
 class Table extends Component {
    // Nextjs uses this function to render this first server-side
-   static async getInitialProps() {
-      return {};
-   }
+   static async getInitialProps() {}
 
    state = {
       jobid: '',
@@ -96,16 +94,6 @@ class Table extends Component {
                ${('00' + currentdate.getSeconds()).slice(-2)}`,
                lastJobID: this.state.jobid,
             });
-         } else {
-            // Only update time
-            this.setState({
-               updated: `${currentdate.getFullYear()}/
-               ${('00' + (currentdate.getMonth() + 1)).slice(-2)}/
-               ${('00' + currentdate.getDate()).slice(-2)}   
-               ${('00' + currentdate.getHours()).slice(-2)}:
-               ${('00' + currentdate.getMinutes()).slice(-2)}:
-               ${('00' + currentdate.getSeconds()).slice(-2)}`,
-            });
          }
 
          this.intervalID = setTimeout(this.getValue.bind(this), 5000);
@@ -118,8 +106,13 @@ class Table extends Component {
       return (
          <div>
             <h3>Basic Request Model</h3>
+            <p>
+               Request a specific price data to an Oracle Node in the Moonbase
+               Alpha TestNet. <br /> The value is stored in a contract that is
+               displayed in this dashboard.
+            </p>
             <h5>
-               Current Value: {this.state.value} (Last Updated:
+               Current Value: {this.state.value} ( Last Updated:{' '}
                {this.state.updated} -- JobID: {this.state.lastJobID})
             </h5>
             <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>

@@ -5,7 +5,9 @@ const jobids = require('../ethereum/jobid');
 
 class Table extends Component {
    // Nextjs uses this function to render this first server-side
-   static async getInitialProps() {}
+   static async getInitialProps() {
+      getValue();
+   }
 
    state = {
       jobid: '',
@@ -34,33 +36,57 @@ class Table extends Component {
          typeof window.ethereum !== 'undefined' &&
          ethereum.chainId === '0x507'
       ) {
-         // Check if Job ID is supported
-         for (let i in jobids) {
-            if (jobids[i] === this.state.jobid) {
-               const clientAddress =
-                  '0xe88ec866D05e637074B5a0D0d931f292d7871613';
-               const contractInstance = BMRInstance(clientAddress, 1);
+         // Contract info
+         const clientAddress = '0x7B7892B75D31abE50537dcdEcef49F2582F174cE';
+         const contractInstance = BMRInstance(clientAddress, 1);
 
-               // Sends the Tx
-               try {
-                  await contractInstance.requestPrice(this.state.jobid);
-               } catch (err) {
-                  this.setState({
-                     loading: false,
-                     errorMessage: err.message,
-                  });
-               }
-               this.setState({ loading: false });
-
-               return;
+         // Hack to reset state of contract
+         if (this.state.jobid === 'moonlinkreset') {
+            try {
+               await contractInstance.forceToTrue();
+            } catch (err) {
+               this.setState({
+                  loading: false,
+                  errorMessage: err.message,
+               });
             }
-         }
+            this.setState({ loading: false });
+            return;
+         } else {
+            // Check if Job ID is supported
+            for (let i in jobids) {
+               if (jobids[i] === this.state.jobid) {
+                  // Check for ongoing request
+                  const check = await contractInstance.fulfillCheck();
 
-         // Error message because JobId not in the list
-         this.setState({
-            loading: false,
-            errorMessage: 'Job ID not supported',
-         });
+                  // Sends the Tx
+                  if (check) {
+                     try {
+                        await contractInstance.requestPrice(this.state.jobid);
+                     } catch (err) {
+                        this.setState({
+                           loading: false,
+                           errorMessage: err.message,
+                        });
+                     }
+                  } else {
+                     this.setState({
+                        loading: false,
+                        errorMessage: `Request ${this.state.lastJobID} ongoing. Please wait until it is fulfilled`,
+                     });
+                  }
+
+                  this.setState({ loading: false });
+                  return;
+               }
+            }
+
+            // Error message because JobId not in the list
+            this.setState({
+               loading: false,
+               errorMessage: 'Job ID not supported',
+            });
+         }
       } else {
          // Error message because MetaMask not found or Network Id not correct
          this.setState({
@@ -77,22 +103,29 @@ class Table extends Component {
          const currentdate = new Date();
 
          // Contract Fetch
-         const clientAddress = '0xe88ec866D05e637074B5a0D0d931f292d7871613';
+         const clientAddress = '0x7B7892B75D31abE50537dcdEcef49F2582F174cE';
          const contractInstance = BMRInstance(clientAddress, 0);
          const value = (await contractInstance.currentPrice()) / 100;
 
          // Check if value is new to update data
          if (value != this.state.value) {
+            // Get Job ID
+            const lastJobID = await contractInstance.lastJobId();
+            // Get Date
+            const lastBlockTime = await contractInstance.lastBlockTime();
+            const epoch = new Date(lastBlockTime.toNumber() * 1000);
+            const date = `${epoch.getFullYear()}/
+            ${('00' + (epoch.getMonth() + 1)).slice(-2)}/
+            ${('00' + epoch.getDate()).slice(-2)} -- 
+            ${('00' + epoch.getHours()).slice(-2)}:
+            ${('00' + epoch.getMinutes()).slice(-2)}:
+            ${('00' + epoch.getSeconds()).slice(-2)}`;
+
             // Update value, time and lastJobID
             this.setState({
                value: value.toString(),
-               updated: `${currentdate.getFullYear()}/
-               ${('00' + (currentdate.getMonth() + 1)).slice(-2)}/
-               ${('00' + currentdate.getDate()).slice(-2)}   
-               ${('00' + currentdate.getHours()).slice(-2)}:
-               ${('00' + currentdate.getMinutes()).slice(-2)}:
-               ${('00' + currentdate.getSeconds()).slice(-2)}`,
-               lastJobID: this.state.jobid,
+               updated: date,
+               lastJobID: lastJobID,
             });
          }
 

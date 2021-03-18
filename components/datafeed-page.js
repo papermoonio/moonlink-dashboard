@@ -5,7 +5,7 @@ const addresses = require('../ethereum/addresses');
 class Table extends Component {
    // Nextjs uses this function to render this first server-side
    static async getInitialProps() {
-      return {};
+      onUpdate();
    }
 
    // Set Initial State

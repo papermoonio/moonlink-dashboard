@@ -180,7 +180,7 @@ class Table extends Component {
                   <tr>
                      <td data-label='Token Pair'>BTC/USD</td>
                      <td data-label='Job ID'>
-                        82ceee2897824a0e8b014ed4ed2ab31ez
+                        82ceee2897824a0e8b014ed4ed2ab31e
                      </td>
                   </tr>
                </tbody>

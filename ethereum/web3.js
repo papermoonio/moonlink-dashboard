@@ -7,7 +7,7 @@ const web3 = () => {
    } else {
       // We are on the server *OR* the user is not running metamask
       return new ethers.providers.StaticJsonRpcProvider(
-         'https://rpc.testnet.moonbeam.network',
+         'https://rpc.api.moonbase.moonbeam.network',
          {
             chainId: 1287,
             name: 'moonbase-alpha',

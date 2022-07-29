@@ -70,7 +70,7 @@ const MoonlinkDashboard = () => {
   return (
     <Container>
       <Head>
-        <title>Moonrevoker</title>
+        <title>Moonlink</title>
         <link rel='icon' type='image/png' sizes='32x32' href='/favicon.png' />
         <link
           rel='stylesheet'

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Message } from 'semantic-ui-react';
+import { Button, Form, Message, Table } from 'semantic-ui-react';
 import BMRInstance from '../ethereum/bmr';
-const jobids = require('../ethereum/jobid');
+const brmInfo = require('../ethereum/jobid');
 
-const Table = () => {
+const JobIdComponent = () => {
   const [jobId, setJobId] = useState('');
   const [jobInfo, setJobInfo] = useState({
     value: 'N/A',
@@ -12,15 +12,13 @@ const Table = () => {
   });
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const { Header, Row, HeaderCell, Body, Cell } = Table;
 
   useEffect(async () => {
     const getValue = async () => {
       try {
-        // Date
-        const currentdate = new Date();
-
         // Contract Fetch
-        const clientAddress = '0x8ea35EdC1709ea0Ea2C86241C7D1C84Fd0dDeB11';
+        const clientAddress = brmInfo.clientAddress;
         const contractInstance = BMRInstance(clientAddress, 0);
         const value = (await contractInstance.currentPrice()) / 100;
 
@@ -57,7 +55,7 @@ const Table = () => {
     // Check Metamask and Chain ID
     if (typeof window.ethereum !== 'undefined' && ethereum.chainId === '0x507') {
       // Contract info
-      const clientAddress = '0x8ea35EdC1709ea0Ea2C86241C7D1C84Fd0dDeB11';
+      const clientAddress = brmInfo.clientAddress;
       const contractInstance = BMRInstance(clientAddress, 1);
 
       // Hack to reset state of contract
@@ -72,8 +70,8 @@ const Table = () => {
         return;
       } else {
         // Check if Job ID is supported
-        for (let i in jobids) {
-          if (jobids[i] === jobId) {
+        for (let i in brmInfo) {
+          if (brmInfo[i] === jobId) {
             // Check for ongoing request
             const check = await contractInstance.fulfillCheck();
 
@@ -107,6 +105,20 @@ const Table = () => {
     }
   };
 
+  const renderRows = () => {
+    const jobs = Object.keys(brmInfo);
+    if (jobs.length !== 0) {
+      return jobs.slice(1).map((job) => {
+        return (
+          <Row key={job}>
+            <Cell>{job.slice(0, job.lastIndexOf('usd')).toUpperCase() + ' / USD'}</Cell>
+            <Cell>{brmInfo[job]}</Cell>
+          </Row>
+        );
+      });
+    }
+  };
+
   return (
     <div>
       <h3>Basic Request Model</h3>
@@ -133,76 +145,17 @@ const Table = () => {
         </Button>
       </Form>
       <br />
-      <table className='ui celled table'>
-        <thead>
-          <tr>
-            <th>Token Pair</th>
-            <th>Job ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td data-label='Token Pair'>BTC/USD</td>
-            <td data-label='Job ID'>82ceee2897824a0e8b014ed4ed2ab31e</td>
-          </tr>
-        </tbody>
-        <tbody>
-          <tr>
-            <td data-label='Token Pair'>ETH/USD</td>
-            <td data-label='Job ID'>60160cdd0e10489681967e9d7ef4c927</td>
-          </tr>
-        </tbody>
-        <tbody>
-          <tr>
-            <td data-label='Token Pair'>DOT/USD</td>
-            <td data-label='Job ID'>6f6371a780324b90aaf195a0d39c723c</td>
-          </tr>
-        </tbody>
-        <tbody>
-          <tr>
-            <td data-label='Token Pair'>KSM/USD</td>
-            <td data-label='Job ID'>30a1686f657249f4b6ab01e384b2beaa</td>
-          </tr>
-        </tbody>
-        <tbody>
-          <tr>
-            <td data-label='Token Pair'>AAVE/USD</td>
-            <td data-label='Job ID'>541b8f7db7374d78b38285ef1b8bfacc</td>
-          </tr>
-        </tbody>
-        <tbody>
-          <tr>
-            <td data-label='Token Pair'>ALGO/USD</td>
-            <td data-label='Job ID'>cdb48696e2314133a1dc8ea27922dd24</td>
-          </tr>
-        </tbody>
-        <tbody>
-          <tr>
-            <td data-label='Token Pair'>BAND/USD</td>
-            <td data-label='Job ID'>6b0983e0cb6d4aca908b615302a9d672</td>
-          </tr>
-        </tbody>
-        <tbody>
-          <tr>
-            <td data-label='Token Pair'>LINK/USD</td>
-            <td data-label='Job ID'>aad8dbdb0c1840ab905728d85117b681</td>
-          </tr>
-        </tbody>
-        <tbody>
-          <tr>
-            <td data-label='Token Pair'>SUSHI/USD</td>
-            <td data-label='Job ID'>b4b07d0fc218455caaff2223a05ec208</td>
-          </tr>
-        </tbody>
-        <tbody>
-          <tr>
-            <td data-label='Token Pair'>UNI/USD</td>
-            <td data-label='Price'>22b567acabdb419abe8136a2bab6ade8</td>
-          </tr>
-        </tbody>
-      </table>
+      <Table>
+        <Header>
+          <Row>
+            <HeaderCell> Token Pair </HeaderCell>
+            <HeaderCell> Job ID </HeaderCell>
+          </Row>
+        </Header>
+        <Body>{renderRows()}</Body>
+      </Table>
     </div>
   );
 };
 
-export default Table;
+export default JobIdComponent;

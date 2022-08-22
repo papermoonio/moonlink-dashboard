@@ -3,7 +3,7 @@ import { Table } from 'semantic-ui-react';
 import ProxyInstance from '../ethereum/feed';
 const addresses = require('../ethereum/addresses');
 
-const table = () => {
+const PriceFeedComponent = () => {
   const [feedsData, setFeedsData] = useState(Array());
   const { Header, Row, HeaderCell, Body, Cell } = Table;
 
@@ -87,4 +87,4 @@ const table = () => {
   );
 };
 
-export default table;
+export default PriceFeedComponent;

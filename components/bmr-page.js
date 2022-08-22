@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Message, Table } from 'semantic-ui-react';
+import { Button, Form, Message, Dropdown } from 'semantic-ui-react';
 import BMRInstance from '../ethereum/bmr';
 const brmInfo = require('../ethereum/jobid');
 
@@ -12,7 +12,6 @@ const JobIdComponent = () => {
   });
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const { Header, Row, HeaderCell, Body, Cell } = Table;
 
   useEffect(async () => {
     const getValue = async () => {
@@ -105,18 +104,24 @@ const JobIdComponent = () => {
     }
   };
 
-  const renderRows = () => {
-    const jobs = Object.keys(brmInfo);
+  const getNames = () => {
+    let jobList = Array();
+    const jobs = Object.keys(brmInfo).slice(1);
     if (jobs.length !== 0) {
-      return jobs.slice(1).map((job) => {
-        return (
-          <Row key={job}>
-            <Cell>{job.slice(0, job.lastIndexOf('usd')).toUpperCase() + ' / USD'}</Cell>
-            <Cell>{brmInfo[job]}</Cell>
-          </Row>
-        );
+      jobs.sort().map((job) => {
+        let value =
+          job.slice(0, job.lastIndexOf('usd')).toUpperCase() + ' / USD -- ' + brmInfo[job];
+        jobList.push({ key: value, text: value, value: brmInfo[job] });
       });
+
+      jobList.push({ key: 'Reset', text: '-- Reset --', value: 'moonlinkreset' });
     }
+    return jobList;
+  };
+
+  const handleChange = (e, { value }) => {
+    console.log(value);
+    setJobId(value);
   };
 
   return (
@@ -132,11 +137,14 @@ const JobIdComponent = () => {
       </h5>
       <Form onSubmit={onSubmit} error={!!errorMessage}>
         <Form.Field>
-          <label>Enter Job ID:</label>
-          <input
+          <label>Select Job ID:</label>
+          <Dropdown
             placeholder='Job ID'
-            value={jobId}
-            onChange={(event) => setJobId(event.target.value)}
+            fluid
+            search
+            selection
+            options={getNames()}
+            onChange={handleChange}
           />
         </Form.Field>
         <Message error header='Oops!' content={errorMessage} />
@@ -145,15 +153,6 @@ const JobIdComponent = () => {
         </Button>
       </Form>
       <br />
-      <Table>
-        <Header>
-          <Row>
-            <HeaderCell> Token Pair </HeaderCell>
-            <HeaderCell> Job ID </HeaderCell>
-          </Row>
-        </Header>
-        <Body>{renderRows()}</Body>
-      </Table>
     </div>
   );
 };

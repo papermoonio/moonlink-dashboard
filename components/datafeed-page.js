@@ -50,7 +50,7 @@ const PriceFeedComponent = () => {
   const renderRows = () => {
     const feeds = Object.keys(addresses);
     if (feeds.length !== 0) {
-      return feeds.map((feed) => {
+      return feeds.sort().map((feed) => {
         if (feedsData[feed]) {
           return (
             <Row key={feed}>

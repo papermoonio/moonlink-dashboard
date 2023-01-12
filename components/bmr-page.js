@@ -84,9 +84,7 @@ const JobIdComponent = () => {
               }
             } else {
               setLoading(false);
-              setErrorMessage(
-                `Request ${jobInfo.lastJobID} ongoing. Please wait until it is fulfilled`
-              );
+              setErrorMessage(`Request ${jobInfo.lastJobID} ongoing. Please wait until it is fulfilled`);
             }
             setLoading(false);
             return;
@@ -109,8 +107,7 @@ const JobIdComponent = () => {
     const jobs = Object.keys(brmInfo).slice(1);
     if (jobs.length !== 0) {
       jobs.sort().map((job) => {
-        let value =
-          job.slice(0, job.lastIndexOf('usd')).toUpperCase() + ' / USD -- ' + brmInfo[job];
+        let value = job.slice(0, job.lastIndexOf('usd')).toUpperCase() + ' / USD -- ' + brmInfo[job];
         jobList.push({ key: value, text: value, value: brmInfo[job] });
       });
 
@@ -126,33 +123,23 @@ const JobIdComponent = () => {
 
   return (
     <div>
-      <h3>Basic Request Model</h3>
       <p>
-        Request a specific price data to an Oracle Node in the Moonbase Alpha TestNet. <br /> The
-        value is stored in a contract that is displayed in this dashboard.
+        Request a specific price data to an Oracle Node in the Moonbase Alpha TestNet. <br /> The value is stored in a
+        contract that is displayed in this dashboard.
       </p>
       <h5>
-        Current Value: $ {jobInfo.value} (Last Updated: {jobInfo.updated} -- JobID:{' '}
-        {jobInfo.lastJobID})
+        Current Value: $ {jobInfo.value} (Last Updated: {jobInfo.updated} -- JobID: {jobInfo.lastJobID})
       </h5>
       <Form onSubmit={onSubmit} error={!!errorMessage}>
         <Form.Field>
           <label>Select Job ID:</label>
-          <Dropdown
-            placeholder='Job ID'
-            fluid
-            search
-            selection
-            options={getNames()}
-            onChange={handleChange}
-          />
+          <Dropdown placeholder='Job ID' fluid search selection options={getNames()} onChange={handleChange} />
         </Form.Field>
         <Message error header='Oops!' content={errorMessage} />
         <Button type='submit' loading={loading} primary>
           Submit Tx
         </Button>
       </Form>
-      <br />
     </div>
   );
 };

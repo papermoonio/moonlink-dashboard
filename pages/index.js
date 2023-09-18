@@ -28,33 +28,35 @@ const MoonlinkDashboard = () => {
   }, []);
 
   const checkMetamask = async () => {
-    const provider = await detectEthereumProvider({ mustBeMetaMask: true });
+    if (window.ethereum) {
+      const provider = await detectEthereumProvider({ mustBeMetaMask: true });
 
-    if (provider) {
-      const chainId = await provider.request({
-        method: 'eth_chainId',
-      });
-
-      let networkName;
-      switch (chainId) {
-        case '0x507':
-          networkName = 'Moonbase Alpha';
-          break;
-        default:
-          networkName = '';
-          setAccount('Only Moonbase Alpha Supported');
-          break;
-      }
-      if (networkName !== '') {
-        setNetworkName(networkName);
-        const accounts = await ethereum.request({
-          method: 'eth_requestAccounts',
+      if (provider) {
+        const chainId = await provider.request({
+          method: 'eth_chainId',
         });
 
-        // Update State
-        if (accounts) {
-          setAccount(ethers.utils.getAddress(accounts[0]));
-          setConnected(true);
+        let networkName;
+        switch (chainId) {
+          case '0x507':
+            networkName = 'Moonbase Alpha';
+            break;
+          default:
+            networkName = '';
+            setAccount('Only Moonbase Alpha Supported');
+            break;
+        }
+        if (networkName !== '') {
+          setNetworkName(networkName);
+          const accounts = await ethereum.request({
+            method: 'eth_requestAccounts',
+          });
+
+          // Update State
+          if (accounts) {
+            setAccount(ethers.utils.getAddress(accounts[0]));
+            setConnected(true);
+          }
         }
       }
     } else {
